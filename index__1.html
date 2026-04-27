@@ -552,12 +552,11 @@
             } else { alert('用户名或密码错误'); }
         }
         function initLocalStorage() {
-    // 直接操作全局 window.animals，避免作用域问题
             let saved = localStorage.getItem('animalData');
-
+        
             if (!saved) {
-        // 初次访问：直接创建 8 只动物（天津坐标）
-                window.animals = [
+                // 初次访问：直接创建 8 只动物（天津坐标）
+                animals = [
                     { id: "A001", name: "中华田园犬", type: "犬类", lat: 39.2404, lng: 117.0627, neuter: "未绝育", vaccinated: "未接种", lastVaccineDate: null, battery: 82, alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: "" },
                     { id: "A002", name: "柯基犬", type: "犬类", lat: 39.2420, lng: 117.0640, neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-10-15", battery: 95, alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: "" },
                     { id: "A003", name: "橘猫", type: "猫类", lat: 39.2450, lng: 117.0580, neuter: "未绝育", vaccinated: "未接种", lastVaccineDate: null, battery: 65, alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: "" },
@@ -567,16 +566,16 @@
                     { id: "A007", name: "狸花猫", type: "猫类", lat: 39.2480, lng: 117.0550, neuter: "未绝育", vaccinated: "未接种", lastVaccineDate: null, battery: 65, alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: "" },
                     { id: "A008", name: "萨摩耶", type: "犬类", lat: 39.2350, lng: 117.0680, neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-09-05", battery: 55, alive: "存活", adoptStatus: "已领养", applicant: "张女士", applyTime: "2026-03-20 14:30:00" }
                 ];
-                localStorage.setItem('animalData', JSON.stringify(window.animals));
+                localStorage.setItem('animalData', JSON.stringify(animals));
             } else {
-        // 已有数据：读取并补充缺失的动物（不覆盖已有数据）
+                // 已有数据：读取并补充缺失的动物（不覆盖已有数据）
                 let existing = JSON.parse(saved);
-        // 确保每个动物都有必要字段
+                // 确保每个动物都有必要字段
                 existing.forEach(a => {
                     if (a.lastVaccineDate === undefined) a.lastVaccineDate = null;
                     if (!a.vaccinated) a.vaccinated = "未接种";
                 });
-        // 需要确保存在的动物列表（ID 去重）
+                // 需要确保存在的动物列表（ID 去重）
                 const requiredAnimals = [
                     { id: "A002", name: "柯基犬", type: "犬类", lat: 39.2420, lng: 117.0640, neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-10-15", battery: 95, alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: "" },
                     { id: "A003", name: "橘猫", type: "猫类", lat: 39.2450, lng: 117.0580, neuter: "未绝育", vaccinated: "未接种", lastVaccineDate: null, battery: 65, alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: "" },
@@ -596,18 +595,14 @@
                 if (added) {
                     localStorage.setItem('animalData', JSON.stringify(existing));
                 }
-                window.animals = existing;
+                // 直接赋值给全局 animals
+                animals = existing;
             }
-
-    // 现在 window.animals 已经是最新数据，同步给全局变量 animals（原代码中的全局变量）
-    // 因为原代码中有一个全局的 animals 变量（没有 window 前缀），我们需要同时更新它。
-    // 直接赋值给全局 animals（该变量在文件开头已用 let 声明，所以这里不能重新声明，只需赋值）
-            animals = window.animals;  // 注意：这里的 animals 是文件开头的全局变量
+        
+            // 数据加载完成后，刷新所有界面
             renderAll();
-    // 可选：打印一下数量，确认数据已加载
-            console.log('✅ initLocalStorage 完成，动物数量：', animals.length);
-
-    // 读取其他数据（预约、围栏、告警）
+        
+            // 其他数据（围栏、预约等）
             let appointSaved = localStorage.getItem('appointmentData');
             if (appointSaved) appointmentData = JSON.parse(appointSaved);
             let fencesSaved = localStorage.getItem('fences');
