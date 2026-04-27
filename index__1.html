@@ -956,12 +956,12 @@
             initLocalStorage();
             initMap();
             initMQTT();
-            renderAll();
             initCountLine();
             updateTime();
             loadLoginState();
             renderAlertList();
             renderFenceList();
+            renderAll();
             setTimeout(() => {
                 resetAllAnimalsFenceStatus();
             }, 1000);
