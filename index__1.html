@@ -551,53 +551,93 @@
                 alert('普通用户登录成功');
             } else { alert('用户名或密码错误'); }
         }
-        function initLocalStorage() {
-            let saved = localStorage.getItem('animalData');
-            if (!saved) {
-                const defaultAnimal = {
-                    id: "A001", name: "中华田园犬", type: "犬类", lat: 39.2404, lng: 117.0627,
-                    neuter: "未绝育", vaccinated: "未接种", lastVaccineDate: null, battery: 82,
-                    alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: ""
-                };
-                animals = [defaultAnimal];
-                localStorage.setItem('animalData', JSON.stringify(animals));
-            } else {
-                animals = JSON.parse(saved);
-                animals.forEach(a => {
-                    if (a.lastVaccineDate === undefined) a.lastVaccineDate = null;
-                    if (!a.vaccinated) a.vaccinated = "未接种";
-                });
-                localStorage.setItem('animalData', JSON.stringify(animals));
-            }
-            // 添加或更新柯基犬示例
-            const corgiIndex = animals.findIndex(a => a.id === 'A002');
-            const corgiData = {
-                id: "A002", name: "柯基犬", type: "犬类", lat: 31.2304, lng: 121.4737,
+function initLocalStorage() {
+    let saved = localStorage.getItem('animalData');
+    if (!saved) {
+        // 初次访问：直接创建 8 只动物
+        animals = [
+            {
+                id: "A001", name: "中华田园犬", type: "犬类", lat: 39.2404, lng: 117.0627,
+                neuter: "未绝育", vaccinated: "未接种", lastVaccineDate: null, battery: 82,
+                alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: ""
+            },
+            {
+                id: "A002", name: "柯基犬", type: "犬类", lat: 39.2420, lng: 117.0640,
                 neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-10-15", battery: 95,
                 alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: ""
-            };
-            if (corgiIndex === -1) animals.push(corgiData);
-            else animals[corgiIndex] = { ...animals[corgiIndex], ...corgiData, lastVaccineDate: corgiData.lastVaccineDate };
-
-            // 添加一只未接种疫苗的猫示例
-            const catIndex = animals.findIndex(a => a.id === 'A003');
-            const catData = {
-                id: "A003", name: "橘猫", type: "猫类", lat: 39.245, lng: 117.058,
+            },
+            {
+                id: "A003", name: "橘猫", type: "猫类", lat: 39.2450, lng: 117.0580,
                 neuter: "未绝育", vaccinated: "未接种", lastVaccineDate: null, battery: 65,
                 alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: ""
-            };
-            if (catIndex === -1) animals.push(catData);
+            },
+            {
+                id: "A004", name: "金毛", type: "犬类", lat: 39.2425, lng: 117.0650,
+                neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-12-01", battery: 92,
+                alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: ""
+            },
+            {
+                id: "A005", name: "布偶猫", type: "猫类", lat: 39.2380, lng: 117.0600,
+                neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-11-15", battery: 88,
+                alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: ""
+            },
+            {
+                id: "A006", name: "哈士奇", type: "犬类", lat: 39.2450, lng: 117.0700,
+                neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-10-20", battery: 70,
+                alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: ""
+            },
+            {
+                id: "A007", name: "狸花猫", type: "猫类", lat: 39.2480, lng: 117.0550,
+                neuter: "未绝育", vaccinated: "未接种", lastVaccineDate: null, battery: 65,
+                alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: ""
+            },
+            {
+                id: "A008", name: "萨摩耶", type: "犬类", lat: 39.2350, lng: 117.0680,
+                neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-09-05", battery: 55,
+                alive: "存活", adoptStatus: "已领养", applicant: "张女士", applyTime: "2026-03-20 14:30:00"
+            }
+        ];
+        localStorage.setItem('animalData', JSON.stringify(animals));
+    } else {
+        // 已有数据：读取，并检查是否缺少 A002～A008（仅补充缺失的）
+        animals = JSON.parse(saved);
+        animals.forEach(a => {
+            if (a.lastVaccineDate === undefined) a.lastVaccineDate = null;
+            if (!a.vaccinated) a.vaccinated = "未接种";
+        });
 
+        // 定义需要确保存在的动物（ID 不重复则添加）
+        const ensureAnimals = [
+            { id: "A002", name: "柯基犬", type: "犬类", lat: 39.2420, lng: 117.0640, neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-10-15", battery: 95, alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: "" },
+            { id: "A003", name: "橘猫", type: "猫类", lat: 39.2450, lng: 117.0580, neuter: "未绝育", vaccinated: "未接种", lastVaccineDate: null, battery: 65, alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: "" },
+            { id: "A004", name: "金毛", type: "犬类", lat: 39.2425, lng: 117.0650, neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-12-01", battery: 92, alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: "" },
+            { id: "A005", name: "布偶猫", type: "猫类", lat: 39.2380, lng: 117.0600, neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-11-15", battery: 88, alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: "" },
+            { id: "A006", name: "哈士奇", type: "犬类", lat: 39.2450, lng: 117.0700, neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-10-20", battery: 70, alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: "" },
+            { id: "A007", name: "狸花猫", type: "猫类", lat: 39.2480, lng: 117.0550, neuter: "未绝育", vaccinated: "未接种", lastVaccineDate: null, battery: 65, alive: "存活", adoptStatus: "待领养", applicant: "", applyTime: "" },
+            { id: "A008", name: "萨摩耶", type: "犬类", lat: 39.2350, lng: 117.0680, neuter: "已绝育", vaccinated: "已接种", lastVaccineDate: "2025-09-05", battery: 55, alive: "存活", adoptStatus: "已领养", applicant: "张女士", applyTime: "2026-03-20 14:30:00" }
+        ];
+
+        let added = false;
+        ensureAnimals.forEach(animal => {
+            if (!animals.find(a => a.id === animal.id)) {
+                animals.push(animal);
+                added = true;
+            }
+        });
+        if (added) {
             localStorage.setItem('animalData', JSON.stringify(animals));
-
-            let appointSaved = localStorage.getItem('appointmentData');
-            if (appointSaved) appointmentData = JSON.parse(appointSaved);
-            let fencesSaved = localStorage.getItem('fences');
-            if (fencesSaved) fences = JSON.parse(fencesSaved);
-            else fences = [];
-            let alertsSaved = localStorage.getItem('alertRecords');
-            if (alertsSaved) alertRecords = JSON.parse(alertsSaved);
         }
+    }
+
+    // 以下保持原样（预约、围栏、告警记录）
+    let appointSaved = localStorage.getItem('appointmentData');
+    if (appointSaved) appointmentData = JSON.parse(appointSaved);
+    let fencesSaved = localStorage.getItem('fences');
+    if (fencesSaved) fences = JSON.parse(fencesSaved);
+    else fences = [];
+    let alertsSaved = localStorage.getItem('alertRecords');
+    if (alertsSaved) alertRecords = JSON.parse(alertsSaved);
+}
         function initMap() {
             map = new AMap.Map("map", { zoom: 16, center: [117.06, 39.24], mapStyle: "amap://styles/whitesmoke", viewMode: "3D" });
             map.on('complete', () => { drawAllFences(); renderMarkers(); });
