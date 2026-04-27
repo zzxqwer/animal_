@@ -616,6 +616,24 @@
             let alertsSaved = localStorage.getItem('alertRecords');
             if (alertsSaved) alertRecords = JSON.parse(alertsSaved);
         }
+        function initMap() {
+            map = new AMap.Map("map", { zoom: 16, center: [117.06, 39.24], mapStyle: "amap://styles/whitesmoke", viewMode: "3D" });
+            map.on('complete', () => { drawAllFences(); renderMarkers(); });
+            map.on('click', onMapClickForFence);
+        }
+        function onMapClickForFence(e) {
+            if (currentRole !== 'admin') return;
+            if (confirm('是否在此位置创建圆形围栏？')) {
+                const lng = e.lnglat.getLng(), lat = e.lnglat.getLat(), name = prompt('围栏名称', `围栏${fences.length + 1}`), radius = parseFloat(prompt('半径（米）', '200'));
+                if (name && !isNaN(radius)) {
+                    const newFence = { id: Date.now().toString(), name: name, centerLng: lng, centerLat: lat, radius: radius, enabled: true };
+                    fences.push(newFence);
+                    saveFences();
+                    resetAllAnimalsFenceStatus();
+                    alert('围栏已添加');
+                }
+            }
+        }
         function drawAllFences() {
             if (!map) return; fenceOverlays.forEach(overlay => map.remove(overlay));
             fenceOverlays = [];
