@@ -597,6 +597,7 @@
                     localStorage.setItem('animalData', JSON.stringify(existing));
                 }
                 window.animals = existing;
+                renderall();
             }
 
     // 现在 window.animals 已经是最新数据，同步给全局变量 animals（原代码中的全局变量）
