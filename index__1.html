@@ -596,7 +596,6 @@
                 if (added) {
                     localStorage.setItem('animalData', JSON.stringify(existing));
                 }
-                renderAll();
                 window.animals = existing;
             }
 
@@ -604,7 +603,7 @@
     // 因为原代码中有一个全局的 animals 变量（没有 window 前缀），我们需要同时更新它。
     // 直接赋值给全局 animals（该变量在文件开头已用 let 声明，所以这里不能重新声明，只需赋值）
             animals = window.animals;  // 注意：这里的 animals 是文件开头的全局变量
-
+            renderAll();
     // 可选：打印一下数量，确认数据已加载
             console.log('✅ initLocalStorage 完成，动物数量：', animals.length);
 
